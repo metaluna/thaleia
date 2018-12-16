@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!--- Document root. -->
+<!ELEMENT population-needs (need)*>
+
+<!--- Need defines exactly one wish that needs to be satisfied by the player. -->
+<!ELEMENT need (name,description,ratio,minimum-population)>
+
+<!--- Title of the need -->
+<!ELEMENT name (#PCDATA)>
+
+<!--- Description of the need -->
+<!ELEMENT description (#PCDATA)>
+
+<!--- Ratio of generated points to 1m people -->
+<!ELEMENT ratio (#PCDATA)>
+
+<!--- Minimum number of people before this need is activated. -->
+<!ELEMENT minimum-population (#PCDATA)>

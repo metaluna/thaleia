@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE population-needs SYSTEM "population_needs.dtd">
+<population-needs>
+  
+  <need>
+    <name>Food</name>
+    <description>People have to eat to survive. Produce food by building farms, mills and fisheries. The amount needed can be modified by genetically engineering a race less dependening on it.</description>
+    <ratio>1</ratio>
+    <minimum-population>0</minimum-population>
+  </need>
+  
+  <need>
+    <name>Water</name>
+    <description>Without water people will die relatively fast. On planets with water this need is automatically satisfied. The amount needed can be modified by genetically engineering a race less dependening on it.</description>
+    <ratio>1</ratio>
+    <minimum-population>0</minimum-population>
+  </need>
+  
+  <need>
+    <name>Clothing</name>
+    <description>Cloth people by building looms and clothing factories.</description>
+    <ratio>0.5</ratio>
+    <minimum-population>0</minimum-population>
+  </need>
+  
+  <need>
+    <name>Entertainment</name>
+    <description>Entertainment can take the form of games, electronic devices, media or pets</description>
+    <ratio>0.25</ratio>
+    <minimum-population>10</minimum-population>
+  </need>
+  
+  <need>
+    <name>Security</name>
+    <description>Security can be provided by building police stations, training troops or stationing military vessels in the star system.</description>
+    <ratio>0.1</ratio>
+    <minimum-population>10</minimum-population>
+  </need>
+  
+  <need>
+    <name>Luxuries</name>
+    <description>A growing population tends to differentiate more by status. Luxuries satisfy the needs of the rich.</description>
+    <ratio>0.01</ratio>
+    <minimum-population>25</minimum-population>
+  </need>
+  
+</population-needs>
