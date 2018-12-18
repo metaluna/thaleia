@@ -27,7 +27,9 @@ package org.projectthaleia.spaceprobes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.projectthaleia.core.Vector;
 import org.projectthaleia.universe.Position;
 
@@ -102,7 +104,33 @@ public class SpaceProbeGroup
     this.direction = _direction;
     validate();
   }
+  
+  /**
+   * Adds a new waypoint to the list.
+   * <p>
+   * If the waypoint is the same as the last one the new waypoint will be dropped.
+   * @param newWaypoint the waypoint to add
+   */
+  public void addWaypoint(Position newWaypoint) {
+    if (newWaypoint == null) {
+      throw new IllegalArgumentException("Waypoint to add must not be null.");
+    }
+    
+    if (!this.waypoints.isEmpty() && 
+          newWaypoint.equals(this.waypoints.get(this.waypoints.size()-1))) {
+      return;
+    }
+    
+    this.waypoints.add(newWaypoint);
+  }
 
+  /**
+   * @return the list of waypoints. May be the empty list.
+   */
+  public List<Position> getWaypoints() {
+    return this.waypoints;
+  }
+  
   /** 
    * The current speed of the group.
    * @return Is never negative.
@@ -200,6 +228,16 @@ public class SpaceProbeGroup
     result.addSpaceProbe(spaceProbe);
     return result;
   }
+  
+  /**
+   * Updates the ships status.
+   * 
+   * @param _delta the period of passed time since the last update in in-game seconds
+   */
+  public void update(long _delta) {
+    updatePosition(_delta);
+  }
+  
   //---------------- PROTECTED ----------------
 
   //-------------- PACKAGE PRIVATE ------------
@@ -212,7 +250,8 @@ public class SpaceProbeGroup
     this.direction = Vector.NOT_MOVING;
     this.currentSpeed = 0;
     this.spaceProbes = new ArrayList<SpaceProbe>();
-
+   
+    this.waypoints = new LinkedList<Position>();
     validate();
   }
   
@@ -228,6 +267,7 @@ public class SpaceProbeGroup
   private Vector direction;
   private int currentSpeed;
   private final List<SpaceProbe> spaceProbes;
+  private final LinkedList<Position> waypoints;
   
   private void validate()
   {
@@ -273,5 +313,54 @@ public class SpaceProbeGroup
       }
     }
     maximumSpeed = lowestSpeed;
+  }
+
+  /**
+   * Updates the ship's position.
+   * <p>
+   * Stops the ship if there is no waypoint but the ship is not stopped.
+   * @param _delta the period of passed time since the last update in in-game seconds
+   */
+  private void updatePosition(long _delta) {
+    if (isStopped()) {
+      return;
+    }
+    
+    if (waypoints.isEmpty()) {
+      stop();
+    }
+    
+    // distance in meters
+    long availableDistance = _delta * currentSpeed;
+    
+    Position nextWaypoint = waypoints.peek();
+    while(availableDistance > 0) {
+      final double distanceToWaypoint = position.distance(nextWaypoint) * 1000;
+      
+      if (distanceToWaypoint <= availableDistance) {
+        // waypoint can be reached within the remaining time of this update
+        availableDistance -= distanceToWaypoint;
+        position = nextWaypoint;
+        waypoints.remove();
+        nextWaypoint = waypoints.peek();
+        if (nextWaypoint == null) {
+          stop();
+          break;
+        }
+      } else {
+        // move towards waypoint
+        Vector2D start = new Vector2D(position.x, position.y);
+        Vector2D target = new Vector2D(nextWaypoint.x, nextWaypoint.y)
+                .subtract(start)                        // direction vector
+                .normalize()                            // normalize to length of 1
+                .scalarMultiply(availableDistance/1000) // covered distance
+                .add(start);                            // move to new position
+        position = new Position((int) target.getX(), (int) target.getY());
+        availableDistance = 0;
+      }
+    }
+    
+        
+    
   }
 }

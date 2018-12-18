@@ -23,6 +23,7 @@
  */
 package org.projectthaleia.spaceprobes;
 
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.projectthaleia.core.Vector;
@@ -232,6 +233,86 @@ public class SpaceProbeGroupTest
     addSpaceProbe(maxSpeed);
     
     spaceProbeGroup.setCurrentSpeed(maxSpeed + 1);
+  }
+  
+  // addWaypoint() tests -------------------------------------------------------
+  @Test
+  public void addsWaypoint() {
+    Position waypoint = new Position(1,2);
+    
+    spaceProbeGroup.addWaypoint(waypoint);
+    
+    List<Position> waypoints = spaceProbeGroup.getWaypoints();
+    assertThat(waypoints, contains(waypoint));
+  }
+  
+  @Test(expected = IllegalArgumentException.class)
+  public void doesNotAddNullWaypoint() {
+    spaceProbeGroup.addWaypoint(null);
+  }
+
+  @Test
+  public void doesNotAddDuplicatedLastWaypoint() {
+    Position waypoint = new Position(1,2);
+    
+    spaceProbeGroup.addWaypoint(waypoint);
+    spaceProbeGroup.addWaypoint(waypoint);
+    
+    List<Position> waypoints = spaceProbeGroup.getWaypoints();
+    assertThat(waypoints, contains(waypoint));
+    assertThat(waypoints.size(), is(1));
+  }
+  
+  // update() ------------------------------------------------------------------
+  @Test
+  public void doesNotChangePositionOnUpdateWhenStopped() {
+    spaceProbeGroup.update(60);
+    
+    assertThat(spaceProbeGroup.getPosition(), is(groupPosition));
+  }
+  
+  @Test
+  public void movesPositionOnUpdate() {
+    addSpaceProbe(1000);
+    spaceProbeGroup.setPosition(new Position(0,0));
+    spaceProbeGroup.addWaypoint(new Position(10,0));
+    spaceProbeGroup.setCurrentSpeed(spaceProbeGroup.getMaximumSpeed());
+    
+    spaceProbeGroup.update(1);
+    
+    assertThat(spaceProbeGroup.getCurrentSpeed(), is(1000));
+    assertThat(spaceProbeGroup.getPosition(), is(new Position(1,0)));
+  }
+  
+  @Test
+  public void movesPositionOnMultipleUpdates() {
+    addSpaceProbe(1000);
+    spaceProbeGroup.setPosition(new Position(0,0));
+    spaceProbeGroup.addWaypoint(new Position(10,0));
+    spaceProbeGroup.setCurrentSpeed(spaceProbeGroup.getMaximumSpeed());
+    
+    spaceProbeGroup.update(1);
+    
+    assertThat(spaceProbeGroup.getCurrentSpeed(), is(1000));
+    assertThat(spaceProbeGroup.getPosition(), is(new Position(1,0)));
+
+    spaceProbeGroup.update(1);
+    
+    assertThat(spaceProbeGroup.getCurrentSpeed(), is(1000));
+    assertThat(spaceProbeGroup.getPosition(), is(new Position(2,0)));
+  }
+  
+  @Test
+  public void stopsAtWaypointOnUpdate() {
+    addSpaceProbe(2000);
+    spaceProbeGroup.setPosition(new Position(0,0));
+    spaceProbeGroup.addWaypoint(new Position(1,0));
+    spaceProbeGroup.setCurrentSpeed(spaceProbeGroup.getMaximumSpeed());
+    
+    spaceProbeGroup.update(1);
+    
+    assertThat(spaceProbeGroup.isStopped(), is(true));
+    assertThat(spaceProbeGroup.getPosition(), is(new Position(1,0)));
   }
   
   // ----------- UTIL ----------------------------------------------------------

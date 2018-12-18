@@ -96,12 +96,16 @@ public class StarSystem
   
   /**
    * Updates all objects in the system a certain step in time.
-   * @param _delta the milliseconds passed since the last update
+   * @param _delta the number of seconds (game time) passed since the last update
    */
   public void update(long _delta)
   {
     for (Planet p : this.planets) {
       p.update(_delta);
+    }
+    
+    for (SpaceProbeGroup spg : this.spaceProbeGroups) {
+      spg.update(_delta);
     }
     
   }

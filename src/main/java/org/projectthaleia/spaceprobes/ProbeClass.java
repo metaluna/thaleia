@@ -53,8 +53,8 @@ public final class ProbeClass
   }
   
   /**
-   * The maximum speed of ship's of this class in km/s.
-   * @return the maximum speed in km/s
+   * The maximum speed of ship's of this class in m/s.
+   * @return the maximum speed in m/s
    */
   public int getSpeed()
   {
@@ -82,6 +82,6 @@ public final class ProbeClass
   private final String name;
   /** Size of the class in an arbitrary, not clearly defined unit */
   private final int size;
-  /** Speed in km/s */
+  /** Speed in m/s */
   private final int speed;
 }

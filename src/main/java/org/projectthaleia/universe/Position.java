@@ -51,6 +51,17 @@ public class Position
     this.y = _other.y;
   }        
 
+  public double distance(Position _other) {
+    if (_other == null) {
+      throw new NullPointerException("Cannot measure distance to null object.");
+    }
+    
+    int dx = Math.abs(_other.x - this.x);
+    int dy = Math.abs(_other.y - this.y);
+    
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
   @Override
   public boolean equals(final Object _obj)
   {
